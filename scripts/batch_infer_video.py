@@ -131,11 +131,16 @@ def load_det_model():
 def process_video(
     video_path, out_dir, hybrik_model, det_model, transformation, gpu=0, save_pose=True
 ):
+    video_name = os.path.basename(video_path)
+    video_basename = os.path.splitext(video_name)[0]
+    # 如果pkl已经存在，则直接跳过
+    if save_pose and os.path.exists(os.path.join(out_dir, f"{video_basename}.pkl")):
+        print(f"Skip {video_basename}")
+        return
+
     res_db = {k: [] for k in res_keys}
 
     print("### Extract Image...")
-    video_name = os.path.basename(video_path)
-    video_basename = os.path.splitext(video_name)[0]
 
     raw_images_path = os.path.join(out_dir, "raw_images")
     if not os.path.exists(raw_images_path):
